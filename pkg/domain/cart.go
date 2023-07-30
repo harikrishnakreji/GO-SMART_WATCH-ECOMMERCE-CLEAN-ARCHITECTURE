@@ -2,7 +2,7 @@ package domain
 
 import "gorm.io/gorm"
 
-type Cart struct {
+type Carts struct {
 	gorm.Model
 	UserID     uint     `json:"user_id" gorm:"uniquekey; not null"`
 	Users      Users    `json:"-" gorm:"foreingkey:UserID"`

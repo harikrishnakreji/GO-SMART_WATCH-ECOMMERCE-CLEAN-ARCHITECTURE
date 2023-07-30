@@ -9,9 +9,9 @@ type AdminUseCase interface {
 	LoginHandler(adminDetails models.AdminLogin) (domain.TokenAdmin, error)
 	CreateAdmin(admin models.AdminSignUp) (domain.TokenAdmin, error)
 	GetUsers(page int, count int) ([]models.UserDetailsAtAdmin, error)
-	GetGenres() ([]domain.Genre, error)
-	AddGenres(genre models.CategoryUpdate) error
-	Delete(genre_id string) error
+	GetCategorys() ([]domain.Category, error)
+	AddCategorys(category models.CategoryUpdate) error
+	Delete(category_id string) error
 	BlockUser(id string) error
 	UnBlockUser(id string) error
 	DashBoard() (models.CompleteAdminDashboard, error)

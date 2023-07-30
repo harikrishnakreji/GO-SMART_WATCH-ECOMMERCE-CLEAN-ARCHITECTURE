@@ -25,9 +25,9 @@ func (p *productDatabase) ShowAllProducts(page int, count int) ([]models.Product
 	offset := (page - 1) * count
 	var productsBrief []models.ProductsBrief
 	err := p.DB.Raw(`
-		SELECT products.id, products.name,genres.genre_name AS genre,products.price,products.quantity
+		SELECT products.id, products.name,categories.category_name AS category,products.price,products.quantity
 		FROM products
-		JOIN genres ON products.genre_id = genres.id
+		JOIN categories ON products.category_id = categories.id
 		 limit ? offset ?
 	`, count, offset).Scan(&productsBrief).Error
 
@@ -44,7 +44,7 @@ func (p *productDatabase) AddProduct(product models.ProductsReceiver) (models.Pr
 	var id int
 
 	sku := product.Name
-	err := p.DB.Raw("INSERT INTO products (name, genre_id, products_description, brand_id, quantity, price, sku) VALUES (?,?, ?, ?, ?, ?, ?) RETURNING id", product.Name, product.GenreID, product.ProductsDescription, product.BrandID, product.Quantity, product.Price, sku).Scan(&id).Error
+	err := p.DB.Raw("INSERT INTO products (name, category_id, products_description, brand_id, quantity, price, sku) VALUES (?,?, ?, ?, ?, ?, ?) RETURNING id", product.Name, product.CategoryID, product.ProductsDescription, product.BrandID, product.Quantity, product.Price, sku).Scan(&id).Error
 	if err != nil {
 		return models.ProductResponse{}, err
 	}
@@ -55,7 +55,7 @@ func (p *productDatabase) AddProduct(product models.ProductsReceiver) (models.Pr
 		p.id,
 		p.sku,
 		p.name,
-		g.genre_name,
+		g.category_name,
 		p.products_description,
 		s.brand_name,
 		p.quantity,
@@ -63,7 +63,7 @@ func (p *productDatabase) AddProduct(product models.ProductsReceiver) (models.Pr
 		FROM
 			products p
 		JOIN
-			genres g ON p.genre_id = g.id
+			categories g ON p.category_id = g.id
 		JOIN
 			brands s ON p.brand_id = s.id 
 		WHERE
@@ -95,13 +95,48 @@ func (p *productDatabase) DeleteProduct(product_id string) error {
 
 }
 
-func (pr *productDatabase) GetGenres() ([]domain.Genre, error) {
+func (p *productDatabase) GetQuantityFromProductID(id int) (int, error) {
 
-	var genres []domain.Genre
-	if err := pr.DB.Raw("select * from genres").Scan(&genres).Error; err != nil {
-		return []domain.Genre{}, err
+	var quantity int
+	err := p.DB.Raw("select quantity from products where id = ?", id).Scan(&quantity).Error
+	if err != nil {
+		return 0.0, err
 	}
 
-	return genres, nil
+	return quantity, nil
+
+}
+
+func (p *productDatabase) DoesProductExist(productID int) (bool, error) {
+
+	var count int
+	err := p.DB.Raw("select count(*) from products where id = ?", productID).Scan(&count).Error
+	if err != nil {
+		return false, err
+	}
+
+	return count > 0, nil
+}
+
+func (pr *productDatabase) GetCategorys() ([]domain.Category, error) {
+
+	var categories []domain.Category
+	if err := pr.DB.Raw("select * from categories").Scan(&categories).Error; err != nil {
+		return []domain.Category{}, err
+	}
+
+	return categories, nil
+
+}
+
+func (pr *productDatabase) GetPriceOfProductFromID(productID int) (float64, error) {
+
+	var productPrice float64
+	if err := pr.DB.Raw("select price from products where id = ?", productID).Scan(&productPrice).Error; err != nil {
+		pr.DB.Rollback()
+		return 0.0, err
+	}
+
+	return productPrice, nil
 
 }

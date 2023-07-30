@@ -120,31 +120,31 @@ func (ad *AdminHandler) GetUsers(c *gin.Context) {
 
 }
 
-// @Summary Get Genre Details to admin side
-// @Description Display Genre details on the admin side
+// @Summary Get Category Details to admin side
+// @Description Display Category details on the admin side
 // @Tags Admin Category Management
 // @Accept json
 // @Produce json
 // @Security Bearer
 // @Success 200 {object} response.Response{}
 // @Failure 500 {object} response.Response{}
-// @Router /admin/genres [get]
-func (ad *AdminHandler) GetGenres(c *gin.Context) {
+// @Router /admin/categories [get]
+func (ad *AdminHandler) GetCategorys(c *gin.Context) {
 
-	genres, err := ad.adminUseCase.GetGenres()
+	categories, err := ad.adminUseCase.GetCategorys()
 	if err != nil {
 		errorRes := response.ClientResponse(http.StatusInternalServerError, "fields provided are in wrong format", nil, err.Error())
 		c.JSON(http.StatusInternalServerError, errorRes)
 		return
 	}
 
-	successRes := response.ClientResponse(http.StatusOK, "Successfully retrieved the genres", genres, nil)
+	successRes := response.ClientResponse(http.StatusOK, "Successfully retrieved the categories", categories, nil)
 	c.JSON(http.StatusOK, successRes)
 
 }
 
-// @Summary Add a new Genres ( Category )
-// @Description Add a new Genre So that movie of that genre can be added
+// @Summary Add a new Categorys ( Category )
+// @Description Add a new Category So that movie of that category can be added
 // @Tags Admin Category Management
 // @Accept json
 // @Produce json
@@ -152,8 +152,8 @@ func (ad *AdminHandler) GetGenres(c *gin.Context) {
 // @Param  category body models.CategoryUpdate true "Update Category"
 // @Success 200 {object} response.Response{}
 // @Failure 500 {object} response.Response{}
-// @Router /admin/genres/add_genre [POST]
-func (ad *AdminHandler) AddGenres(c *gin.Context) {
+// @Router /admin/categories/add_category [POST]
+func (ad *AdminHandler) AddCategorys(c *gin.Context) {
 
 	var category models.CategoryUpdate
 	if err := c.ShouldBindJSON(&category); err != nil {
@@ -162,35 +162,35 @@ func (ad *AdminHandler) AddGenres(c *gin.Context) {
 		return
 	}
 
-	err := ad.adminUseCase.AddGenres(category)
+	err := ad.adminUseCase.AddCategorys(category)
 	if err != nil {
 		errorRes := response.ClientResponse(http.StatusInternalServerError, "The category could not be added", nil, err.Error())
 		c.JSON(http.StatusInternalServerError, errorRes)
 		return
 	}
 
-	successRes := response.ClientResponse(http.StatusCreated, "Successfully added the genre", nil, nil)
+	successRes := response.ClientResponse(http.StatusCreated, "Successfully added the category", nil, nil)
 	c.JSON(http.StatusCreated, successRes)
 
 }
 
-// @Summary Delete Genre ( Category )
-// @Description Delete Genre for existing films and delete the films along with it
+// @Summary Delete Category ( Category )
+// @Description Delete Category for existing films and delete the films along with it
 // @Tags Admin Category Management
 // @Accept json
 // @Produce json
 // @Security Bearer
-// @Param id path string true "genre-id"
+// @Param id path string true "category-id"
 // @Success 200 {object} response.Response{}
 // @Failure 500 {object} response.Response{}
-// @Router /admin/genres/delete_genre/{id} [POST]
-func (ad *AdminHandler) DeleteGenre(c *gin.Context) {
+// @Router /admin/categories/delete_category/{id} [POST]
+func (ad *AdminHandler) DeleteCategory(c *gin.Context) {
 
-	genre_id := c.Param("id")
-	err := ad.adminUseCase.Delete(genre_id)
+	category_id := c.Param("id")
+	err := ad.adminUseCase.Delete(category_id)
 
 	if err != nil {
-		errorRes := response.ClientResponse(http.StatusBadRequest, "could not delete the specified genre", nil, err.Error())
+		errorRes := response.ClientResponse(http.StatusBadRequest, "could not delete the specified category", nil, err.Error())
 		c.JSON(http.StatusInternalServerError, errorRes)
 		return
 	}

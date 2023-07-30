@@ -96,15 +96,15 @@ func (ad *adminUseCase) CreateAdmin(admin models.AdminSignUp) (domain.TokenAdmin
 
 }
 
-func (ad *adminUseCase) AddGenres(genre models.CategoryUpdate) error {
+func (ad *adminUseCase) AddCategorys(category models.CategoryUpdate) error {
 
-	return ad.adminRepository.AddGenre(genre)
+	return ad.adminRepository.AddCategory(category)
 
 }
 
-func (ad *adminUseCase) Delete(genre_id string) error {
+func (ad *adminUseCase) Delete(category_id string) error {
 
-	err := ad.adminRepository.Delete(genre_id)
+	err := ad.adminRepository.Delete(category_id)
 	if err != nil {
 		return err
 	}
@@ -112,9 +112,9 @@ func (ad *adminUseCase) Delete(genre_id string) error {
 
 }
 
-func (ad *adminUseCase) GetGenres() ([]domain.Genre, error) {
+func (ad *adminUseCase) GetCategorys() ([]domain.Category, error) {
 
-	return ad.adminRepository.GetGenres()
+	return ad.adminRepository.GetCategorys()
 
 }
 

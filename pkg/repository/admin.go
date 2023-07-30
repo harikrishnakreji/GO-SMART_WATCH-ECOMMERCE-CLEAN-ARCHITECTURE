@@ -71,53 +71,53 @@ func (ad *adminRepository) GetUsers(page int, count int) ([]models.UserDetailsAt
 
 }
 
-func (ad *adminRepository) GetGenres() ([]domain.Genre, error) {
+func (ad *adminRepository) GetCategorys() ([]domain.Category, error) {
 
-	var genres []domain.Genre
-	if err := ad.DB.Raw("select * from genres").Scan(&genres).Error; err != nil {
-		return []domain.Genre{}, err
+	var categories []domain.Category
+	if err := ad.DB.Raw("select * from categories").Scan(&categories).Error; err != nil {
+		return []domain.Category{}, err
 	}
 
-	return genres, nil
+	return categories, nil
 
 }
 
 // CATEGORY MANAGEMENT
-func (ad *adminRepository) AddGenre(genre models.CategoryUpdate) error {
+func (ad *adminRepository) AddCategory(category models.CategoryUpdate) error {
 
 	var count int
-	err := ad.DB.Raw("select count(*) from genres where genre_name = ?", genre.Genre).Scan(&count).Error
+	err := ad.DB.Raw("select count(*) from categories where category_name = ?", category.Category).Scan(&count).Error
 	if err != nil {
 		return err
 	}
 
 	if count > 0 {
-		return errors.New("the genre already exist")
+		return errors.New("the category already exist")
 	}
 
-	if err := ad.DB.Exec("insert into genres (genre_name) values (?) ", genre.Genre).Error; err != nil {
+	if err := ad.DB.Exec("insert into categories (category_name) values (?) ", category.Category).Error; err != nil {
 		return err
 	}
 	return nil
 
 }
 
-func (ad *adminRepository) Delete(genre_id string) error {
+func (ad *adminRepository) Delete(category_id string) error {
 
-	id, err := strconv.Atoi(genre_id)
+	id, err := strconv.Atoi(category_id)
 	if err != nil {
 		return err
 	}
 
 	var count int
-	if err := ad.DB.Raw("select count(*) from genres where id = ?", id).Scan(&count).Error; err != nil {
+	if err := ad.DB.Raw("select count(*) from categories where id = ?", id).Scan(&count).Error; err != nil {
 		return err
 	}
 	if count < 1 {
-		return errors.New("genre for given id does not exist")
+		return errors.New("category for given id does not exist")
 	}
 
-	query := fmt.Sprintf("delete from genres where id = '%d'", id)
+	query := fmt.Sprintf("delete from categories where id = '%d'", id)
 	if err := ad.DB.Exec(query).Error; err != nil {
 		return err
 	}

@@ -9,8 +9,8 @@ type ProductRepository interface {
 	ShowAllProducts(page int, count int) ([]models.ProductsBrief, error)
 	AddProduct(product models.ProductsReceiver) (models.ProductResponse, error)
 	DeleteProduct(product_id string) error
-	// DoesProductExist(productID int) (bool, error)
-	GetGenres() ([]domain.Genre, error)
-	// GetQuantityFromProductID(id int) (int, error)
-	// GetPriceOfProductFromID(productID int) (float64, error)
+	DoesProductExist(productID int) (bool, error)
+	GetCategorys() ([]domain.Category, error)
+	GetQuantityFromProductID(id int) (int, error)
+	GetPriceOfProductFromID(productID int) (float64, error)
 }

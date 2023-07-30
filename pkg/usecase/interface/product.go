@@ -10,5 +10,5 @@ type ProductUseCase interface {
 	ShowAllProductsToAdmin(page int, count int) ([]models.ProductsBrief, error)
 	AddProduct(product models.ProductsReceiver) (models.ProductResponse, error)
 	DeleteProduct(product_id string) error
-	GetGenres() ([]domain.Genre, error)
+	GetCategorys() ([]domain.Category, error)
 }

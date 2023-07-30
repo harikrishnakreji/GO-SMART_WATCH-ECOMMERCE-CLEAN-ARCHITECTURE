@@ -1,6 +1,6 @@
 package models
 
-type Cart struct {
+type Carts struct {
 	ProductID  uint    `json:"product_id"`
 	Name       string  `json:"name"`
 	Quantity   float64 `json:"quantity"`
@@ -10,7 +10,7 @@ type Cart struct {
 type CartResponse struct {
 	UserName   string
 	TotalPrice float64
-	Cart       []Cart
+	Cart       []Carts
 }
 type CartTotal struct {
 	UserName   string  `json:"user_name"`

@@ -95,7 +95,7 @@ func (pr *productUseCase) DeleteProduct(product_id string) error {
 
 }
 
-func (pr *productUseCase) GetGenres() ([]domain.Genre, error) {
+func (pr *productUseCase) GetCategorys() ([]domain.Category, error) {
 
-	return pr.productRepo.GetGenres()
+	return pr.productRepo.GetCategorys()
 }

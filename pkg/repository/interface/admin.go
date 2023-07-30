@@ -10,9 +10,9 @@ type AdminRepository interface {
 	CreateAdmin(admin models.AdminSignUp) (models.AdminDetailsResponse, error)
 	CheckAdminAvailability(admin models.AdminSignUp) bool
 	GetUsers(page int, count int) ([]models.UserDetailsAtAdmin, error)
-	GetGenres() ([]domain.Genre, error)
-	AddGenre(genre models.CategoryUpdate) error
-	Delete(genre_id string) error
+	GetCategorys() ([]domain.Category, error)
+	AddCategory(category models.CategoryUpdate) error
+	Delete(category_id string) error
 	GetUserByID(id string) (domain.Users, error)
 	UpdateBlockUserByID(user domain.Users) error
 	DashboardUserDetails() (models.DashboardUser, error)
