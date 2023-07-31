@@ -10,20 +10,20 @@ func AdminRoutes(router *gin.RouterGroup, adminHandler *handler.AdminHandler, pr
 
 	router.POST("/adminlogin", adminHandler.LoginHandler)
 
-	router.POST("/create-admin", adminHandler.CreateAdmin)
-	router.POST("/add_category", adminHandler.AddCategorys)
+	// router.POST("/create-admin", adminHandler.CreateAdmin)
+	// router.POST("/add_category", adminHandler.AddCategorys)
 
 	router.Use(middleware.AuthorizationMiddleware)
 	{
 		router.GET("/dashboard", adminHandler.DashBoard)
-		// router.POST("/create-admin", adminHandler.CreateAdmin)
+		router.POST("/create-admin", adminHandler.CreateAdmin)
 
-		// categories := router.Group("/categories")
-		// {
-		// 	categories.GET("", adminHandler.GetCategorys) // change this to get category
-		// 	categories.POST("/add_category", adminHandler.AddCategorys)
-		// 	categories.DELETE("/delete_category/:id", adminHandler.DeleteCategory)
-		// }
+		categories := router.Group("/categories")
+		{
+			categories.GET("", adminHandler.GetCategorys) // change this to get category
+			categories.POST("/add_category", adminHandler.AddCategorys)
+			categories.DELETE("/delete_category/:id", adminHandler.DeleteCategory)
+		}
 
 		product := router.Group("/products")
 		{

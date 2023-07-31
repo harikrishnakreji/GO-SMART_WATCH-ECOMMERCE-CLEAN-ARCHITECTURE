@@ -5,7 +5,7 @@ type ProductResponse struct {
 	Name                string  `json:"name"`
 	CategoryName        string  `json:"category_name"`
 	ProductsDescription string  `json:"product_description"`
-	BrandName           string  `json:"brand_namess"`
+	BrandName           string  `json:"brand_names"`
 	Quantity            int     `json:"quantity"`
 	Price               float64 `json:"price"`
 }

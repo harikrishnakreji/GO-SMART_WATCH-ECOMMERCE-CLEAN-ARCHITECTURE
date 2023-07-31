@@ -7,12 +7,12 @@ type Carts struct {
 	TotalPrice float64 `json:"total_price"`
 }
 
-type CartResponse struct {
+type CartsResponse struct {
 	UserName   string
 	TotalPrice float64
-	Cart       []Carts
+	Carts      []Carts
 }
-type CartTotal struct {
+type CartsTotal struct {
 	UserName   string  `json:"user_name"`
 	TotalPrice float64 `json:"total_price"`
 }

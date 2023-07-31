@@ -42,7 +42,6 @@ func (p *productDatabase) ShowAllProducts(page int, count int) ([]models.Product
 func (p *productDatabase) AddProduct(product models.ProductsReceiver) (models.ProductResponse, error) {
 
 	var id int
-
 	sku := product.Name
 	err := p.DB.Raw("INSERT INTO products (name, category_id, products_description, brand_id, quantity, price, sku) VALUES (?,?, ?, ?, ?, ?, ?) RETURNING id", product.Name, product.CategoryID, product.ProductsDescription, product.BrandID, product.Quantity, product.Price, sku).Scan(&id).Error
 	if err != nil {
