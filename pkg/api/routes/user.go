@@ -6,7 +6,7 @@ import (
 	"github.com/harikrishnakreji/GO-SMART_WATCH-ECOMMERCE-CLEAN-ARCHITECTURE/pkg/api/middleware"
 )
 
-func UserRoutes(router *gin.RouterGroup, userHandler *handler.UserHandler, otpHandler *handler.OtpHandler, productHandler *handler.ProductHandler, cartHandler *handler.CartsHandler) {
+func UserRoutes(router *gin.RouterGroup, userHandler *handler.UserHandler, otpHandler *handler.OtpHandler, productHandler *handler.ProductHandler, cartsHandler *handler.CartsHandler, orderHandler *handler.OrderHandler) {
 
 	// USER SIDE
 	router.POST("/signup", userHandler.UserSignUp)
@@ -23,13 +23,39 @@ func UserRoutes(router *gin.RouterGroup, userHandler *handler.UserHandler, otpHa
 	router.Use(middleware.AuthMiddleware())
 
 	{
-		cart := router.Group("/cart")
+		carts := router.Group("/carts")
 		{
-			cart.POST("/addtocart/:id", cartHandler.AddToCarts)
-			cart.DELETE("/removefromcart/:id", cartHandler.RemoveFromCarts)
-			cart.GET("", cartHandler.DisplayCarts)
-			cart.DELETE("", cartHandler.EmptyCarts)
+			carts.POST("/addtocarts/:id", cartsHandler.AddToCarts)
+			carts.DELETE("/removefromcarts/:id", cartsHandler.RemoveFromCarts)
+			carts.GET("", cartsHandler.DisplayCarts)
+			carts.DELETE("", cartsHandler.EmptyCarts)
 		}
+	}
+
+	address := router.Group("/address")
+	{
+		address.POST("", userHandler.AddAddress)
+		address.PUT("/:id", userHandler.UpdateAddress)
+	}
+
+	users := router.Group("/users")
+	{
+
+		users.GET("", userHandler.UserDetails)
+		users.PUT("", userHandler.UpdateUserDetails)
+		users.GET("/address", userHandler.GetAllAddress)
+		users.POST("/address", userHandler.AddAddress)
+		orders := users.Group("orders")
+		{
+			orders.GET("", orderHandler.GetOrderDetails)
+			orders.GET("/:page", orderHandler.GetOrderDetails)
+		}
+
+		users.PUT("/cancel-order/:id", orderHandler.CancelOrder)
+		users.PUT("/update-password", userHandler.UpdatePassword)
+
+		users.GET("/delivered/:order_id", orderHandler.OrderDelivered)
+
 	}
 
 }

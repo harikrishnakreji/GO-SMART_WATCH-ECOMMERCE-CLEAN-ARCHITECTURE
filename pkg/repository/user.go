@@ -89,3 +89,117 @@ func (cr *UserDatabase) UserBlockStatus(email string) (bool, error) {
 
 	return isBlocked, nil
 }
+
+func (cr *UserDatabase) AddAddress(address models.AddressInfo, userID int) error {
+
+	fmt.Println(address)
+	err := cr.DB.Exec("insert into addresses (user_id,name,house_name,state,pin,street,city) values (?, ?, ?, ?, ?, ?, ?)", userID, address.Name, address.HouseName, address.State, address.Pin, address.Street, address.City).Error
+	if err != nil {
+		return err
+	}
+
+	return nil
+
+}
+
+func (cr *UserDatabase) UpdateAddress(address models.AddressInfo, addressID int, userID int) (models.AddressInfoResponse, error) {
+
+	err := cr.DB.Exec("update addresses set house_name = ?, state = ?, pin = ?, street = ?, city = ? where id = ? and user_id = ?", address.HouseName, address.State, address.Pin, address.Street, address.City, addressID, userID).Error
+	if err != nil {
+		return models.AddressInfoResponse{}, err
+	}
+
+	var addressResponse models.AddressInfoResponse
+	err = cr.DB.Raw("select * from addresses where id = ?", addressID).Scan(&addressResponse).Error
+	if err != nil {
+		return models.AddressInfoResponse{}, err
+	}
+
+	return addressResponse, nil
+
+}
+
+func (cr *UserDatabase) GetAllAddresses(userID int) ([]models.AddressInfoResponse, error) {
+
+	var addressResponse []models.AddressInfoResponse
+	err := cr.DB.Raw(`select * from addresses where user_id = $1`, userID).Scan(&addressResponse).Error
+	if err != nil {
+		return []models.AddressInfoResponse{}, err
+	}
+
+	return addressResponse, nil
+
+}
+
+func (cr *UserDatabase) GetAllPaymentOption() ([]models.PaymentDetails, error) {
+
+	var paymentMethods []models.PaymentDetails
+	err := cr.DB.Raw("select * from payment_methods").Scan(&paymentMethods).Error
+	if err != nil {
+		return []models.PaymentDetails{}, err
+	}
+
+	return paymentMethods, nil
+
+}
+
+func (cr *UserDatabase) UserDetails(userID int) (models.UsersProfileDetails, error) {
+
+	var userDetails models.UsersProfileDetails
+	err := cr.DB.Raw("select users.name,users.email,users.phone,referrals.referral_code from users inner join referrals on users.id = referrals.user_id where users.id = ?", userID).Row().Scan(&userDetails.Name, &userDetails.Email, &userDetails.Phone, &userDetails.ReferralCode)
+	if err != nil {
+		return models.UsersProfileDetails{}, err
+	}
+
+	return userDetails, nil
+}
+
+func (cr *UserDatabase) UpdateUserEmail(email string, userID int) error {
+
+	err := cr.DB.Exec("update users set email = ? where id = ?", email, userID).Error
+	if err != nil {
+		return err
+	}
+	return nil
+
+}
+
+func (cr *UserDatabase) UpdateUserPhone(phone string, userID int) error {
+
+	err := cr.DB.Exec("update users set phone = ? where id = ?", phone, userID).Error
+	if err != nil {
+		return err
+	}
+	return nil
+
+}
+
+func (cr *UserDatabase) UpdateUserName(name string, userID int) error {
+
+	err := cr.DB.Exec("update users set name = ? where id = ?", name, userID).Error
+	if err != nil {
+		return err
+	}
+	return nil
+
+}
+
+func (cr *UserDatabase) UpdateUserPassword(password string, userID int) error {
+
+	err := cr.DB.Exec("update users set password = ? where id = ?", password, userID).Error
+	if err != nil {
+		return err
+	}
+	return nil
+
+}
+
+func (cr *UserDatabase) ResetPassword(userID int, password string) error {
+
+	err := cr.DB.Exec("update users set password = ? where id = ?", password, userID).Error
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

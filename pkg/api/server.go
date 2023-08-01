@@ -12,14 +12,14 @@ type ServerHTTP struct {
 	engine *gin.Engine
 }
 
-func NewServerHTTP(userHandler *handler.UserHandler, productHandler *handler.ProductHandler, otpHandler *handler.OtpHandler, adminHandler *handler.AdminHandler, cartHandler *handler.CartsHandler) *ServerHTTP {
+func NewServerHTTP(userHandler *handler.UserHandler, productHandler *handler.ProductHandler, otpHandler *handler.OtpHandler, adminHandler *handler.AdminHandler, cartsHandler *handler.CartsHandler, orderHandler *handler.OrderHandler) *ServerHTTP {
 	router := gin.New()
 
 	router.Use(gin.Logger())
 
 	// router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
-	routes.UserRoutes(router.Group("/"), userHandler, otpHandler, productHandler, cartHandler)
+	routes.UserRoutes(router.Group("/"), userHandler, otpHandler, productHandler, cartsHandler, orderHandler)
 	routes.AdminRoutes(router.Group("/admin"), adminHandler, productHandler, userHandler)
 
 	return &ServerHTTP{engine: router}

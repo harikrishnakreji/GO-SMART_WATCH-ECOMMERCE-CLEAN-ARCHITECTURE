@@ -1,7 +1,9 @@
 package usecase
 
 import (
+	"context"
 	"errors"
+	"fmt"
 
 	"github.com/harikrishnakreji/GO-SMART_WATCH-ECOMMERCE-CLEAN-ARCHITECTURE/pkg/helper"
 	interfaces "github.com/harikrishnakreji/GO-SMART_WATCH-ECOMMERCE-CLEAN-ARCHITECTURE/pkg/repository/interface"
@@ -13,12 +15,14 @@ import (
 
 type userUseCase struct {
 	userRepo    interfaces.UserRepository
+	cartsRepo   interfaces.CartsRepository
 	productRepo interfaces.ProductRepository
 }
 
-func NewUserUseCase(repo interfaces.UserRepository, productRepository interfaces.ProductRepository) services.UserUseCase {
+func NewUserUseCase(repo interfaces.UserRepository, cartsRepositiry interfaces.CartsRepository, productRepository interfaces.ProductRepository) services.UserUseCase {
 	return &userUseCase{
 		userRepo:    repo,
+		cartsRepo:   cartsRepositiry,
 		productRepo: productRepository,
 	}
 }
@@ -111,5 +115,158 @@ func (u *userUseCase) LoginHandler(user models.UserLogin) (models.TokenUsers, er
 		Users: userDetails,
 		Token: tokenString,
 	}, nil
+
+}
+
+func (u *userUseCase) AddAddress(address models.AddressInfo, userID int) error {
+
+	err := u.userRepo.AddAddress(address, userID)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (u *userUseCase) UpdateAddress(address models.AddressInfo, addressID int, userID int) (models.AddressInfoResponse, error) {
+
+	return u.userRepo.UpdateAddress(address, addressID, userID)
+
+}
+
+// user checkout section
+func (u *userUseCase) Checkout(userID int) (models.CheckoutDetails, error) {
+
+	// list all address added by the user
+	allUserAddress, err := u.userRepo.GetAllAddresses(userID)
+	if err != nil {
+		return models.CheckoutDetails{}, err
+	}
+
+	// get available payment options
+	paymentDetails, err := u.userRepo.GetAllPaymentOption()
+	if err != nil {
+		return models.CheckoutDetails{}, err
+	}
+
+	// get all items from users carts
+	cartsItems, err := u.cartsRepo.GetAllItemsFromCarts(userID)
+	if err != nil {
+		return models.CheckoutDetails{}, err
+	}
+
+	// get grand total of all the product
+	grandTotal, err := u.cartsRepo.GetTotalPrice(userID)
+	if err != nil {
+		return models.CheckoutDetails{}, err
+	}
+
+	return models.CheckoutDetails{
+		AddressInfoResponse: allUserAddress,
+		Payment_Method:      paymentDetails,
+		Carts:               cartsItems,
+		Grand_Total:         grandTotal.TotalPrice,
+		Total_Price:         grandTotal.FinalPrice,
+	}, nil
+}
+
+func (u *userUseCase) UserDetails(userID int) (models.UsersProfileDetails, error) {
+
+	return u.userRepo.UserDetails(userID)
+
+}
+
+func (u *userUseCase) GetAllAddress(userID int) ([]models.AddressInfoResponse, error) {
+
+	userAddress, err := u.userRepo.GetAllAddresses(userID)
+
+	if err != nil {
+		return []models.AddressInfoResponse{}, nil
+	}
+
+	return userAddress, nil
+
+}
+
+func (u *userUseCase) UpdateUserDetails(userDetails models.UsersProfileDetails, ctx context.Context) (models.UsersProfileDetails, error) {
+
+	var userID int
+	var ok bool
+	// sent value through context - just for studying purpose - not required in this case
+	if userID, ok = ctx.Value("userID").(int); !ok {
+		return models.UsersProfileDetails{}, errors.New("error retreiving user details")
+	}
+
+	userExist := u.userRepo.CheckUserAvailability(userDetails.Email)
+
+	// update with email that does not already exist
+	if userExist {
+		return models.UsersProfileDetails{}, errors.New("user already exist, choose different email")
+	}
+	// which all field are not empty (which are provided from the front end should be updated)
+	if userDetails.Email != "" {
+		u.userRepo.UpdateUserEmail(userDetails.Email, userID)
+	}
+
+	if userDetails.Name != "" {
+		u.userRepo.UpdateUserName(userDetails.Name, userID)
+	}
+
+	if userDetails.Phone != "" {
+		u.userRepo.UpdateUserPhone(userDetails.Phone, userID)
+	}
+
+	return u.userRepo.UserDetails(userID)
+
+}
+
+func (u *userUseCase) UpdatePassword(ctx context.Context, body models.UpdatePassword) error {
+
+	var userID int
+	var ok bool
+	if userID, ok = ctx.Value("userID").(int); !ok {
+		return errors.New("error retrieving user details")
+	}
+
+	userPassword, err := u.userRepo.UserPassword(userID)
+	if err != nil {
+		return err
+	}
+
+	err = bcrypt.CompareHashAndPassword([]byte(userPassword), []byte(body.OldPassword))
+	if err != nil {
+		return errors.New("password incorrect")
+	}
+	fmt.Println(body)
+	if body.NewPassword != body.ConfirmNewPassword {
+		return errors.New("password does not match")
+	}
+
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(body.NewPassword), 10)
+	if err != nil {
+		return errors.New("internal server error")
+	}
+
+	return u.userRepo.UpdateUserPassword(string(hashedPassword), userID)
+
+}
+
+func (u *userUseCase) ResetPassword(userID int, pass models.ResetPassword) error {
+
+	if pass.Password != pass.CPassword {
+		return errors.New("password does not match")
+	}
+
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(pass.Password), 10)
+	if err != nil {
+		return errors.New("internal server error")
+	}
+
+	err = u.userRepo.ResetPassword(userID, string(hashedPassword))
+	if err != nil {
+		return err
+	}
+
+	return nil
 
 }

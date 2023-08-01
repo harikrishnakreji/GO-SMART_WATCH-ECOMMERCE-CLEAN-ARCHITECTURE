@@ -28,4 +28,5 @@ type CartsRepository interface {
 	CheckProduct(product_id int) (bool, string, error)
 	ProductExist(product_id int, userID int) (bool, error)
 	DoesCartsExist(userID int) (bool, error)
+	GetAllItemsFromCarts(userID int) ([]models.Carts, error)
 }
