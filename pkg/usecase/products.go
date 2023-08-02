@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"errors"
 	"fmt"
 
 	domain "github.com/harikrishnakreji/GO-SMART_WATCH-ECOMMERCE-CLEAN-ARCHITECTURE/pkg/domain"
@@ -98,4 +99,18 @@ func (pr *productUseCase) DeleteProduct(product_id string) error {
 func (pr *productUseCase) GetCategorys() ([]domain.Category, error) {
 
 	return pr.productRepo.GetCategorys()
+}
+
+func (pr *productUseCase) ShowIndividualProducts(product_id string) (models.ProductResponse, error) {
+
+	product, err := pr.productRepo.ShowIndividualProducts(product_id)
+	if err != nil {
+		return models.ProductResponse{}, err
+	}
+	if product.Name == "" {
+		return models.ProductResponse{}, errors.New("record not available")
+	}
+
+	return product, nil
+
 }

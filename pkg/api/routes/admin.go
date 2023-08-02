@@ -6,7 +6,7 @@ import (
 	"github.com/harikrishnakreji/GO-SMART_WATCH-ECOMMERCE-CLEAN-ARCHITECTURE/pkg/api/middleware"
 )
 
-func AdminRoutes(router *gin.RouterGroup, adminHandler *handler.AdminHandler, productHandler *handler.ProductHandler, userHandler *handler.UserHandler) {
+func AdminRoutes(router *gin.RouterGroup, adminHandler *handler.AdminHandler, productHandler *handler.ProductHandler, userHandler *handler.UserHandler, orderHandler *handler.OrderHandler) {
 
 	router.POST("/adminlogin", adminHandler.LoginHandler)
 
@@ -40,6 +40,15 @@ func AdminRoutes(router *gin.RouterGroup, adminHandler *handler.AdminHandler, pr
 			userDetails.GET("/:page", adminHandler.GetUsers)
 			userDetails.GET("/block-users/:id", adminHandler.BlockUser)
 			userDetails.GET("/unblock-users/:id", adminHandler.UnBlockUser)
+		}
+
+		orders := router.Group("/orders")
+		{
+			orders.GET("", orderHandler.GetAllOrderDetailsForAdmin)
+			orders.GET("/:page", orderHandler.GetAllOrderDetailsForAdmin)
+
+			orders.GET("/approve-order/:order_id", orderHandler.ApproveOrder)
+			orders.GET("/cancel-order/:order_id", orderHandler.CancelOrderFromAdminSide)
 		}
 	}
 }

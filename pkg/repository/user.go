@@ -146,7 +146,7 @@ func (cr *UserDatabase) GetAllPaymentOption() ([]models.PaymentDetails, error) {
 func (cr *UserDatabase) UserDetails(userID int) (models.UsersProfileDetails, error) {
 
 	var userDetails models.UsersProfileDetails
-	err := cr.DB.Raw("select users.name,users.email,users.phone,referrals.referral_code from users inner join referrals on users.id = referrals.user_id where users.id = ?", userID).Row().Scan(&userDetails.Name, &userDetails.Email, &userDetails.Phone, &userDetails.ReferralCode)
+	err := cr.DB.Raw("select users.name,users.email,users.phone from users where id=?", userID).Row().Scan(&userDetails.Name, &userDetails.Email, &userDetails.Phone)
 	if err != nil {
 		return models.UsersProfileDetails{}, err
 	}

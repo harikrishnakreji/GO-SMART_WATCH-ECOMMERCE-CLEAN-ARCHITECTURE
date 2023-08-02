@@ -8,6 +8,7 @@ import (
 type ProductUseCase interface {
 	ShowAllProducts(page int, count int) ([]models.ProductsBrief, error)
 	ShowAllProductsToAdmin(page int, count int) ([]models.ProductsBrief, error)
+	ShowIndividualProducts(product_id string) (models.ProductResponse, error)
 	AddProduct(product models.ProductsReceiver) (models.ProductResponse, error)
 	DeleteProduct(product_id string) error
 	GetCategorys() ([]domain.Category, error)

@@ -139,3 +139,34 @@ func (pr *productDatabase) GetPriceOfProductFromID(productID int) (float64, erro
 	return productPrice, nil
 
 }
+
+// detailed product details
+func (p *productDatabase) ShowIndividualProducts(product_id string) (models.ProductResponse, error) {
+	id, _ := strconv.Atoi(product_id)
+	var product models.ProductResponse
+	err := p.DB.Raw(`
+	SELECT
+		p.id,
+		p.name,
+		g.category_name,
+		p.products_description,
+		s.brand_name,
+		p.quantity,
+		p.price
+		FROM
+			products p
+		JOIN
+			categories g ON p.category_id = g.id
+		JOIN
+			brands s ON p.brand_id = s.id 
+		WHERE
+			p.id = ?
+			`, id).Scan(&product).Error
+
+	if err != nil {
+		return models.ProductResponse{}, errors.New("error retrieved record")
+	}
+
+	return product, nil
+
+}

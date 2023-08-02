@@ -19,6 +19,7 @@ func UserRoutes(router *gin.RouterGroup, userHandler *handler.UserHandler, otpHa
 	{
 		product.GET("", productHandler.ShowAllProducts)
 		product.GET("/page/:page", productHandler.ShowAllProducts)
+		product.GET("/:id", productHandler.ShowIndividualProducts)
 	}
 	router.Use(middleware.AuthMiddleware())
 
@@ -29,6 +30,7 @@ func UserRoutes(router *gin.RouterGroup, userHandler *handler.UserHandler, otpHa
 			carts.DELETE("/removefromcarts/:id", cartsHandler.RemoveFromCarts)
 			carts.GET("", cartsHandler.DisplayCarts)
 			carts.DELETE("", cartsHandler.EmptyCarts)
+			carts.POST("/order", orderHandler.OrderItemsFromCarts)
 		}
 	}
 
@@ -38,14 +40,14 @@ func UserRoutes(router *gin.RouterGroup, userHandler *handler.UserHandler, otpHa
 		address.PUT("/:id", userHandler.UpdateAddress)
 	}
 
-	users := router.Group("/users")
+	users := router.Group("/user")
 	{
 
 		users.GET("", userHandler.UserDetails)
 		users.PUT("", userHandler.UpdateUserDetails)
 		users.GET("/address", userHandler.GetAllAddress)
 		users.POST("/address", userHandler.AddAddress)
-		orders := users.Group("orders")
+		orders := users.Group("/orders")
 		{
 			orders.GET("", orderHandler.GetOrderDetails)
 			orders.GET("/:page", orderHandler.GetOrderDetails)

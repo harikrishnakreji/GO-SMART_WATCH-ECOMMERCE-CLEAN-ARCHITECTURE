@@ -155,3 +155,28 @@ func (pr *ProductHandler) DeleteProduct(c *gin.Context) {
 	c.JSON(http.StatusOK, successRes)
 
 }
+
+// @Summary Get Individual Product Details
+// @Description Get Individual Detailed product details to user side
+// @Tags User Product
+// @Accept json
+// @Produce json
+// @Param id path string true "sku"
+// @Success 200 {object} response.Response{}
+// @Failure 500 {object} response.Response{}
+// @Router /products/{id} [get]
+func (pr *ProductHandler) ShowIndividualProducts(c *gin.Context) {
+
+	product_id := c.Param("id")
+	product, err := pr.productUseCase.ShowIndividualProducts(product_id)
+	fmt.Println(product)
+	if err != nil {
+		errorRes := response.ClientResponse(http.StatusBadRequest, "path variables in wrong format", nil, err.Error())
+		c.JSON(http.StatusInternalServerError, errorRes)
+		return
+	}
+
+	successRes := response.ClientResponse(http.StatusOK, "Product details retrieved successfully", product, nil)
+	c.JSON(http.StatusOK, successRes)
+
+}

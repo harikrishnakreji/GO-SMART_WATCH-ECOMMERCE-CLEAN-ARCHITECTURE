@@ -2,6 +2,7 @@ package handler
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -231,8 +232,8 @@ func (u *UserHandler) CheckOut(c *gin.Context) {
 func (u *UserHandler) UserDetails(c *gin.Context) {
 
 	userID, _ := c.Get("user_id")
-
 	userDetails, err := u.userUseCase.UserDetails(userID.(int))
+	fmt.Println(userDetails)
 	if err != nil {
 		errorRes := response.ClientResponse(http.StatusInternalServerError, "failed to retrieve details", nil, err.Error())
 		c.JSON(http.StatusInternalServerError, errorRes)
@@ -279,6 +280,7 @@ func (u *UserHandler) UpdateUserDetails(c *gin.Context) {
 	var user models.UsersProfileDetails
 
 	if err := c.ShouldBindJSON(&user); err != nil {
+		fmt.Println(user)
 		errorRes := response.ClientResponse(http.StatusBadRequest, "fields provided are in wrong format", nil, err.Error())
 		c.JSON(http.StatusBadRequest, errorRes)
 		return

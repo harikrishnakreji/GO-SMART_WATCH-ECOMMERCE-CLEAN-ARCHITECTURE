@@ -71,8 +71,8 @@ func (o *orderUseCase) OrderItemsFromCarts(orderFromCarts models.OrderFromCarts,
 	}
 
 	orderDetails.FinalPrice = orderDetails.GrandTotal
-	if orderBody.PaymentID == 2 {
-		orderDetails.PaymentStatus = "not paid"
+	if orderBody.PaymentID == 1 {
+		orderDetails.PaymentStatus = "COD"
 		orderDetails.ShipmentStatus = "pending"
 	}
 
@@ -210,17 +210,7 @@ func (o *orderUseCase) ApproveOrder(orderID string) error {
 		return err
 	}
 
-	if shipmentStatus == "cancelled" {
-
-		return errors.New("the order is cancelled, cannot approve it")
-	}
-
 	if shipmentStatus == "pending" {
-
-		return errors.New("the order is pending, cannot approve it")
-	}
-
-	if shipmentStatus == "processing" {
 		fmt.Println("reached here")
 		err := o.orderRepository.ApproveOrder(orderID)
 
