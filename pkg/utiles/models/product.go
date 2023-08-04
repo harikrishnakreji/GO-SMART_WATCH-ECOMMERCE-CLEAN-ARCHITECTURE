@@ -10,6 +10,11 @@ type ProductResponse struct {
 	Price               float64 `json:"price"`
 }
 
+type ShowProducts struct {
+	TottalCount   int
+	ProductsBrief []ProductsBrief
+}
+
 type ProductsReceiver struct {
 	Name                string  `json:"name" binding:"required"`
 	CategoryID          uint    `json:"category_id" binding:"required"`

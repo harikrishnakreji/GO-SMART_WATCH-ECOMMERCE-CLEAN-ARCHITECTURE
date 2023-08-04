@@ -7,6 +7,7 @@ import (
 
 type ProductRepository interface {
 	ShowAllProducts(page int, count int) ([]models.ProductsBrief, error)
+	ShowAllProductCount() (int, error)
 	ShowIndividualProducts(product_id string) (models.ProductResponse, error)
 	AddProduct(product models.ProductsReceiver) (models.ProductResponse, error)
 	DeleteProduct(product_id string) error

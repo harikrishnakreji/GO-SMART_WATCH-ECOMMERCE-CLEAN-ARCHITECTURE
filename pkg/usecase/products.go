@@ -20,9 +20,8 @@ func NewProductUseCase(repo interfaces.ProductRepository) services.ProductUseCas
 	}
 }
 
-func (pr *productUseCase) ShowAllProducts(page int, count int) ([]models.ProductsBrief, error) {
+func (pr *productUseCase) ShowAllProducts(page int, count int) (models.ShowProducts, error) {
 	productsBrief, err := pr.productRepo.ShowAllProducts(page, count)
-
 	if err != nil {
 		panic("no products")
 	}
@@ -35,7 +34,12 @@ func (pr *productUseCase) ShowAllProducts(page int, count int) ([]models.Product
 			p.ProductStatus = "in stock"
 		}
 	}
-	return productsBrief, nil
+	Count, err := pr.productRepo.ShowAllProductCount()
+	showproducts := models.ShowProducts{
+		TottalCount:   Count,
+		ProductsBrief: productsBrief,
+	}
+	return showproducts, nil
 }
 
 func (pr *productUseCase) ShowAllProductsToAdmin(page int, count int) ([]models.ProductsBrief, error) {

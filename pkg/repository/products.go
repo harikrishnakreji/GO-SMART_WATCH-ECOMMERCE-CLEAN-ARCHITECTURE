@@ -39,6 +39,15 @@ func (p *productDatabase) ShowAllProducts(page int, count int) ([]models.Product
 
 }
 
+func (p *productDatabase) ShowAllProductCount() (int, error) {
+	var count int
+	err := p.DB.Raw("select count(*) from products ").Scan(&count).Error
+	if err != nil {
+		return 0, err
+	}
+	return count, nil
+}
+
 func (p *productDatabase) AddProduct(product models.ProductsReceiver) (models.ProductResponse, error) {
 
 	var id int
