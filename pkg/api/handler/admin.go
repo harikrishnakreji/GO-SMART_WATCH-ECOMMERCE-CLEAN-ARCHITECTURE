@@ -272,3 +272,28 @@ func (ad *AdminHandler) DashBoard(c *gin.Context) {
 	c.JSON(http.StatusOK, successRes)
 
 }
+
+// @Summary Filtered Sales Report
+// @Description Get Filtered sales report by week, month and year
+// @Tags Admin Dash Board
+// @Accept json
+// @Produce json
+// @Security Bearer
+// @Param period path string true "sales report"
+// @Success 200 {object} response.Response{}
+// @Failure 500 {object} response.Response{}
+// @Router /admin/sales-report/{period} [GET]
+func (ad *AdminHandler) FilteredSalesReport(c *gin.Context) {
+
+	timePeriod := c.Param("period")
+	salesReport, err := ad.adminUseCase.FilteredSalesReport(timePeriod)
+	if err != nil {
+		errorRes := response.ClientResponse(http.StatusInternalServerError, "sales report could not be retrieved", nil, err.Error())
+		c.JSON(http.StatusInternalServerError, errorRes)
+		return
+	}
+
+	successRes := response.ClientResponse(http.StatusOK, "sales report retrieved successfully", salesReport, nil)
+	c.JSON(http.StatusOK, successRes)
+
+}

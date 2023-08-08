@@ -68,3 +68,52 @@ func (ot *otpUseCase) VerifyOTP(code models.VerifyData) (models.TokenUsers, erro
 	}, nil
 
 }
+
+func (ot *otpUseCase) SendOTPtoReset(email string) (string, error) {
+
+	// check whether the user exist
+	ok, err := ot.otpRepository.FindUserByEmail(email)
+	if err != nil {
+		return "", err
+	}
+	if !ok {
+		return "", errors.New("the user does not exist")
+	}
+
+	phone, err := ot.otpRepository.GetUserPhoneByEmail(email)
+	if err != nil {
+		return "", err
+	}
+
+	helper.TwilioSetup(ot.cfg.ACCOUNTSID, ot.cfg.AUTHTOKEN)
+	_, err = helper.TwilioSendOTP(phone, ot.cfg.SERVICESSID)
+	if err != nil {
+		return "", errors.New("error ocurred while generating OTP")
+	}
+
+	return phone, nil
+
+}
+
+func (ot *otpUseCase) VerifyOTPtoReset(code models.VerifyData) (string, error) {
+
+	helper.TwilioSetup(ot.cfg.ACCOUNTSID, ot.cfg.AUTHTOKEN)
+	err := helper.TwilioVerifyOTP(ot.cfg.SERVICESSID, code.Code, code.User.PhoneNumber)
+	if err != nil {
+		return "", errors.New("error while verifying")
+	}
+
+	// if user is authenticated using OTP send back user details
+	userDetails, err := ot.otpRepository.UserDetailsUsingPhone(code.User.PhoneNumber)
+	if err != nil {
+		return "", err
+	}
+
+	tokenString, err := helper.GenerateTokenToResetPassword(userDetails)
+	if err != nil {
+		return "", err
+	}
+
+	return tokenString, err
+
+}

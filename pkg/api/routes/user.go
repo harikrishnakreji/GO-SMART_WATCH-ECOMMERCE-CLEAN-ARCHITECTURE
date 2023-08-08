@@ -6,7 +6,7 @@ import (
 	"github.com/harikrishnakreji/GO-SMART_WATCH-ECOMMERCE-CLEAN-ARCHITECTURE/pkg/api/middleware"
 )
 
-func UserRoutes(router *gin.RouterGroup, userHandler *handler.UserHandler, otpHandler *handler.OtpHandler, productHandler *handler.ProductHandler, cartsHandler *handler.CartsHandler, orderHandler *handler.OrderHandler) {
+func UserRoutes(router *gin.RouterGroup, userHandler *handler.UserHandler, otpHandler *handler.OtpHandler, productHandler *handler.ProductHandler, cartsHandler *handler.CartsHandler, orderHandler *handler.OrderHandler, paymentHandler *handler.PaymentHandler) {
 
 	// USER SIDE
 	router.POST("/signup", userHandler.UserSignUp)
@@ -15,6 +15,15 @@ func UserRoutes(router *gin.RouterGroup, userHandler *handler.UserHandler, otpHa
 	router.POST("/send-otp", otpHandler.SendOTP)
 	router.POST("/verify-otp", otpHandler.VerifyOTP)
 
+	forgotPassword := router.Group("/forgot-password")
+	{
+		forgotPassword.POST("", otpHandler.SendOTPtoReset)
+		forgotPassword.POST("/verify-otp", otpHandler.VerifyOTPToReset)
+
+		forgotPassword.Use(middleware.AuthMiddlewareReset())
+		forgotPassword.PUT("/reset", userHandler.ResetPassword)
+
+	}
 	product := router.Group("/products")
 	{
 		product.GET("", productHandler.ShowAllProducts)
@@ -57,6 +66,13 @@ func UserRoutes(router *gin.RouterGroup, userHandler *handler.UserHandler, otpHa
 		users.PUT("/update-password", userHandler.UpdatePassword)
 
 		users.GET("/delivered/:order_id", orderHandler.OrderDelivered)
+		users.GET("/return/:order_id", orderHandler.ReturnOrder)
+
+		router.GET("/checkout", userHandler.CheckOut)
+		router.POST("/order", orderHandler.OrderItemsFromCarts)
+
+		router.GET("/payment/:id", paymentHandler.MakePaymentRazorPay)
+		router.GET("/payment-success", paymentHandler.VerifyPayment)
 
 	}
 

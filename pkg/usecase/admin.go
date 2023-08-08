@@ -175,6 +175,19 @@ func (ad *adminUseCase) UnBlockUser(id string) error {
 
 }
 
+func (ad *adminUseCase) FilteredSalesReport(timePeriod string) (models.SalesReport, error) {
+
+	startTime, endTime := helper.GetTimeFromPeriod(timePeriod)
+
+	salesReport, err := ad.adminRepository.FilteredSalesReport(startTime, endTime)
+	if err != nil {
+		return models.SalesReport{}, err
+	}
+
+	return salesReport, nil
+
+}
+
 func (ad *adminUseCase) DashBoard() (models.CompleteAdminDashboard, error) {
 
 	userDetails, err := ad.adminRepository.DashboardUserDetails()

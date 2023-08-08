@@ -14,5 +14,6 @@ type AdminUseCase interface {
 	Delete(category_id string) error
 	BlockUser(id string) error
 	UnBlockUser(id string) error
+	FilteredSalesReport(timePeriod string) (models.SalesReport, error)
 	DashBoard() (models.CompleteAdminDashboard, error)
 }

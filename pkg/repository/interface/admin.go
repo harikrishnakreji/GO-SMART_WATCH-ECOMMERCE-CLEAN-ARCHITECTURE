@@ -1,6 +1,8 @@
 package interfaces
 
 import (
+	"time"
+
 	"github.com/harikrishnakreji/GO-SMART_WATCH-ECOMMERCE-CLEAN-ARCHITECTURE/pkg/domain"
 	"github.com/harikrishnakreji/GO-SMART_WATCH-ECOMMERCE-CLEAN-ARCHITECTURE/pkg/utiles/models"
 )
@@ -15,6 +17,7 @@ type AdminRepository interface {
 	Delete(category_id string) error
 	GetUserByID(id string) (domain.Users, error)
 	UpdateBlockUserByID(user domain.Users) error
+	FilteredSalesReport(startTime time.Time, endTime time.Time) (models.SalesReport, error)
 	DashboardUserDetails() (models.DashboardUser, error)
 	DashBoardProductDetails() (models.DashBoardProduct, error)
 }

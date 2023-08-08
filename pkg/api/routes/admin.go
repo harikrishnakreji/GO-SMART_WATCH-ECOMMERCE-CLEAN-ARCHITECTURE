@@ -16,6 +16,7 @@ func AdminRoutes(router *gin.RouterGroup, adminHandler *handler.AdminHandler, pr
 	router.Use(middleware.AuthorizationMiddleware)
 	{
 		router.GET("/dashboard", adminHandler.DashBoard)
+		router.GET("/sales-report/:period", adminHandler.FilteredSalesReport)
 		router.POST("/create-admin", adminHandler.CreateAdmin)
 
 		categories := router.Group("/categories")
@@ -49,6 +50,7 @@ func AdminRoutes(router *gin.RouterGroup, adminHandler *handler.AdminHandler, pr
 
 			orders.GET("/approve-order/:order_id", orderHandler.ApproveOrder)
 			orders.GET("/cancel-order/:order_id", orderHandler.CancelOrderFromAdminSide)
+			orders.PUT("/refund-order/:order_id", orderHandler.RefundUser)
 		}
 	}
 }

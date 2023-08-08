@@ -245,3 +245,57 @@ func (o *OrderHandler) OrderDelivered(c *gin.Context) {
 	c.JSON(http.StatusOK, successRes)
 
 }
+
+// @Summary Return Order
+// @Description Return delivered Order by the user by specifying the OrderID
+// @Tags User Order
+// @Accept json
+// @Produce json
+// @Security Bearer
+// @Param id path string true "Order ID"
+// @Success 200 {object} response.Response{}
+// @Failure 500 {object} response.Response{}
+// @Router /users/return/{id} [get]
+func (o *OrderHandler) ReturnOrder(c *gin.Context) {
+
+	orderID := c.Param("order_id")
+
+	err := o.orderUseCase.ReturnOrder(orderID)
+
+	if err != nil {
+		errRes := response.ClientResponse(http.StatusInternalServerError, "order could not be returned", nil, err)
+		c.JSON(http.StatusInternalServerError, errRes)
+		return
+	}
+
+	successRes := response.ClientResponse(http.StatusOK, "successfully returned", nil, nil)
+	c.JSON(http.StatusOK, successRes)
+
+}
+
+// @Summary Refund Order
+// @Description Refund an offer by admin
+// @Tags Admin Order Management
+// @Accept json
+// @Produce json
+// @Security Bearer
+// @Param id path string true "Order ID"
+// @Success 200 {object} response.Response{}
+// @Failure 500 {object} response.Response{}
+// @Router /admin/refund-order/{id} [get]
+func (o *OrderHandler) RefundUser(c *gin.Context) {
+
+	orderID := c.Param("order_id")
+
+	err := o.orderUseCase.RefundOrder(orderID)
+
+	if err != nil {
+		errRes := response.ClientResponse(http.StatusInternalServerError, "refund was not possible", nil, err)
+		c.JSON(http.StatusInternalServerError, errRes)
+		return
+	}
+
+	successRes := response.ClientResponse(http.StatusOK, "Refunded the user", nil, nil)
+	c.JSON(http.StatusOK, successRes)
+
+}

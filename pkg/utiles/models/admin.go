@@ -23,8 +23,34 @@ type AdminDetailsResponse struct {
 	Name  string `json:"name" `
 	Email string `json:"email" `
 }
+type SalesReport struct {
+	TotalSales      float64
+	TotalOrders     int
+	CompletedOrders int
+	PendingOrders   int
+	TrendingProduct string
+}
 
 // ADMIN DASHBOARD COMPLETE DETAILS
+
+type DashboardRevenue struct {
+	TodayRevenue float64
+	MonthRevenue float64
+	YearRevenue  float64
+}
+
+type DashboardOrder struct {
+	CompletedOrder int
+	PendingOrder   int
+	CancelledOrder int
+	TotalOrder     int
+	TotalOrderItem int
+}
+
+type DashboardAmount struct {
+	CreditedAmount float64
+	PendingAmount  float64
+}
 
 type DashboardUser struct {
 	TotalUsers   int
@@ -33,10 +59,15 @@ type DashboardUser struct {
 }
 
 type DashBoardProduct struct {
-	TotalProducts int
+	TotalProducts     int
+	OutOfStockProduct int
+	TopSellingProduct string
 }
 
 type CompleteAdminDashboard struct {
+	DashboardRevenue DashboardRevenue
+	DashboardOrder   DashboardOrder
+	DashboardAmount  DashboardAmount
 	DashboardUser    DashboardUser
 	DashBoardProduct DashBoardProduct
 }
