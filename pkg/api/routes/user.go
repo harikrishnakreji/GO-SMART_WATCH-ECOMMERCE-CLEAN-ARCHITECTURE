@@ -54,6 +54,7 @@ func UserRoutes(router *gin.RouterGroup, userHandler *handler.UserHandler, otpHa
 
 		users.GET("", userHandler.UserDetails)
 		users.PUT("", userHandler.UpdateUserDetails)
+		router.GET("/checkout", userHandler.CheckOut)
 		users.GET("/address", userHandler.GetAllAddress)
 		users.POST("/address", userHandler.AddAddress)
 		orders := users.Group("/orders")
@@ -68,7 +69,6 @@ func UserRoutes(router *gin.RouterGroup, userHandler *handler.UserHandler, otpHa
 		users.GET("/delivered/:order_id", orderHandler.OrderDelivered)
 		users.GET("/return/:order_id", orderHandler.ReturnOrder)
 
-		router.GET("/checkout", userHandler.CheckOut)
 		router.POST("/order", orderHandler.OrderItemsFromCarts)
 
 		router.GET("/payment/:id", paymentHandler.MakePaymentRazorPay)

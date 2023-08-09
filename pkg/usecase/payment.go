@@ -30,7 +30,7 @@ func (p *paymentUseCase) MakePaymentRazorPay(orderID string, userID int) (models
 		return models.CombinedOrderDetails{}, "", err
 	}
 
-	client := razorpay.NewClient("rzp_test_e09he3W40ZH3Ab", "VUzcbDIbyRpZ0rAbJk5Pu2Pq")
+	client := razorpay.NewClient("rzp_test_AcVxAhyZEXSJ6H", "IXYtGlRdNFkdB5nozcKNbq09")
 
 	data := map[string]interface{}{
 		"amount":   int(combinedOrderDetails.FinalPrice) * 100,

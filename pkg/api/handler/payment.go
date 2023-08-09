@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -30,6 +31,8 @@ func (p *PaymentHandler) MakePaymentRazorPay(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, errorRes)
 		return
 	}
+
+	fmt.Println(razorID)
 
 	c.HTML(http.StatusOK, "index.html", gin.H{
 		"final_price": orderDetail.FinalPrice * 100,

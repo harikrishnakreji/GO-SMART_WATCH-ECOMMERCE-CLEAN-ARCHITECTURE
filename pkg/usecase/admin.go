@@ -190,6 +190,21 @@ func (ad *adminUseCase) FilteredSalesReport(timePeriod string) (models.SalesRepo
 
 func (ad *adminUseCase) DashBoard() (models.CompleteAdminDashboard, error) {
 
+	totalRevenue, err := ad.adminRepository.TotalRevenue()
+	if err != nil {
+		return models.CompleteAdminDashboard{}, err
+	}
+
+	orderDetails, err := ad.adminRepository.DashBoardOrder()
+	if err != nil {
+		return models.CompleteAdminDashboard{}, err
+	}
+
+	amountDetails, err := ad.adminRepository.AmountDetails()
+	if err != nil {
+		return models.CompleteAdminDashboard{}, err
+	}
+
 	userDetails, err := ad.adminRepository.DashboardUserDetails()
 	if err != nil {
 		return models.CompleteAdminDashboard{}, err
@@ -201,6 +216,9 @@ func (ad *adminUseCase) DashBoard() (models.CompleteAdminDashboard, error) {
 	}
 
 	return models.CompleteAdminDashboard{
+		DashboardRevenue: totalRevenue,
+		DashboardOrder:   orderDetails,
+		DashboardAmount:  amountDetails,
 		DashboardUser:    userDetails,
 		DashBoardProduct: productDetails,
 	}, nil
